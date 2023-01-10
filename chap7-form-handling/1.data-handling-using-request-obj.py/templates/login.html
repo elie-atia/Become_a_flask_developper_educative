@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}
+Login Page
+{% endblock %}
+
+{% block content %}
+<h1>Login</h1>
+{% if message %}
+    {{ message }}
+{% endif %}
+<form action="{{url_for('login')}}" method="POST">
+  Email:<br>
+  <input type="text" name="email" >
+  <br>
+  Password:<br>
+  <input type="password" name="password" >
+  <br><br>
+  <input type="submit" value="Login">
+</form> 
+<hr>
+{% endblock %}
