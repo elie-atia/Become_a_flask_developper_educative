@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 
 {% block title %}
-Sign-Up 
+Login
 {% endblock %}
 
 {% block heading %}
-Sign Up
+Login
 {% endblock %}
 
 {% block content %}
@@ -15,17 +15,7 @@ Sign Up
 {% endif %}
 
 {% if form %}
-<form action="{{url_for('signup')}}" method="POST" style="padding:5px;">
-    <!-- Full Name Field -->
-    {{ form.full_name.label }}: <br>
-    {{ form.full_name }} 
-    <br>
-    {% if form.full_name.errors %}
-        {% for error in form.full_name.errors %}
-        <b style="color:tomato;"> {{ error }} </b> 
-        <br>
-        {% endfor %}
-    {% endif %}
+<form action="{{url_for('login')}}" method="POST" style="padding:5px;">
 
     <!-- Email Field -->
     {{ form.email.label }}: <br>
@@ -49,19 +39,8 @@ Sign Up
         {% endfor %}
     {% endif %}
 
-    <!-- Confirm Password Field -->
-    {{ form.confirm_password.label }}: <br>
-    {{ form.confirm_password }}
-    <br>
-    {% if form.confirm_password.errors %}
-        {% for error in form.confirm_password.errors %}
-        <b style="color:tomato;"> {{ error }} </b>
-        <br>
-        {% endfor %}
-    {% endif %}
-    
     {{ form.csrf_token }}
     {{ form.submit }}
 </form> 
 {% endif %}
-{% endblock %}  
+{% endblock %}
