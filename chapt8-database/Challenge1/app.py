@@ -26,7 +26,8 @@ class User(db.Model):
     password = db.Column(db.String)
     pets = db.relationship('Pet', backref = 'user')
 
-db.create_all()
+with app.app_context():
+    db.create_all()
 
 """Information regarding the Pets in the System."""
 pets = [
