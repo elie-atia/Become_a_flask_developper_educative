@@ -1,12 +1,14 @@
 """Flask Application for Paws Rescue Center."""
 from flask import Flask, render_template, abort
-from forms import SignUpForm, LoginForm, PetForm
+from forms import SignUpForm, LoginForm, PetForm, InsertPetForm
 from flask import session, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
+import os
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'dfewfew123213rwdsgert34tgfd1234trgf'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///paws.db'
+app.config['UPLOAD_FOLDER'] = './chapt9-operations on models/Challenges/static'
 db = SQLAlchemy(app)
 
 """Model for Pets."""
@@ -97,17 +99,20 @@ def pet_details(pet_id):
     form = PetForm(name = pet.name, age = pet.age, bio = pet.bio )
 
     if form.validate_on_submit():
-        pet_to_update = Pet.query.get(pet.id)
-        pet_to_update.name = form.name.data
-        pet_to_update.age = form.age.data
-        pet_to_update.bio = form.bio.data
+        pet.name = form.name.data
+        pet.age = form.age.data
+        pet.bio = form.bio.data
         try:
             db.session.commit()
         except Exception as e:
             print(e)
             db.session.rollback()
+            return render_template("details.html", pet = pet, form = form, message = "A Pet with this name already exists!")
+
         finally:
             db.session.close()
+            pet = Pet.query.get(pet_id)
+
     return render_template("details.html", pet = pet, form=form)
 
 
@@ -151,7 +156,42 @@ def login():
 def logout():
     if 'user' in session:
         session.pop('user')
-    return redirect(url_for('homepage', _scheme='https', _external=True))
-    
+    return redirect(url_for('homepage'))
+
+@app.route("/delete/<int:pet_id>")
+def delete_pet(pet_id):
+    pet = Pet.query.get(pet_id)
+    if pet is None: 
+        abort(404, description="No Pet was Found with the given ID")
+    db.session.delete(pet)
+    try:
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+    return redirect(url_for('homepage'))
+
+@app.route("/insert", methods=['GET','POST'])
+def insert_pet():
+    form = InsertPetForm()
+    if form.validate_on_submit():
+        image_file = form.image.data
+        name = form.name.data
+        age = form.age.data
+        bio = form.bio.data
+        new_pet = Pet(name=name, age=age, bio=bio)
+        rows = db.session.query(Pet).count() #the number of pets in the DB.
+        db.session.add(new_pet)
+        image_file.save(os.path.join(app.config['UPLOAD_FOLDER'], str(rows) + '.jpg'))
+        # Commit changes in the session
+        try:
+            db.session.commit()
+        except Exception as e: 
+            db.session.rollback()
+        finally:
+            db.session.close()
+    return render_template("insert.html", form = form)
+
+        
+
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=3000)

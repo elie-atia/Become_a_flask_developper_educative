@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
+from wtforms import StringField, PasswordField, SubmitField, FileField
 from wtforms.validators import InputRequired, Email, EqualTo
 
 class SignUpForm(FlaskForm):
@@ -22,3 +22,10 @@ class PetForm(FlaskForm):
     age = StringField('Pet"s Age', validators = [InputRequired()])
     bio = StringField('Pet"s Bio', validators = [InputRequired()])
     submit = SubmitField('Edit Pet')
+
+class InsertPetForm(FlaskForm):
+    name = StringField('Pet"s Name', validators = [InputRequired()])
+    age = StringField('Pet"s Age', validators = [InputRequired()])
+    bio = StringField('Pet"s Bio', validators = [InputRequired()])
+    image = FileField('Upload an image')
+    submit = SubmitField('Insert Pet')

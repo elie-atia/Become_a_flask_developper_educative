@@ -1,52 +1,41 @@
 {% extends "base.html" %}
 
-{% block title %} {{pet.name}}'s Details {% endblock %} 
+{% block title %} {{pet["name"]}}'s Details {% endblock %} 
 
 {% block content %} 
     <div style="float:left; border-style:double;">
-        <img src= "{{url_for('static', filename = pet["id"]|string+".jpg")}}" height="350" >
+        <img src= "{{url_for('static', filename = pet.id|string+".jpg")}}" height="350" ><br>
+        <button style="background-color:tomato" onclick="location.href='{{ url_for('delete_pet', pet_id = pet.id)}}'"> Delete Pet </button>
     </div> 
     <div style="float:left; margin:10px;">
         <h1 class="title">{{ pet.name }}</h1>
         <p><b>Age: &nbsp;</b> {{pet.age}}</p>
         <p><b>Bio: &nbsp;</b> {{pet.bio}}</p>
-        <h1 class="Edit Pet">{{ pet.name }}</h1>
+        <hr> 
         
-        <form action="{{url_for('pet_details', pet_id = pet['id'])}}" method="POST" style="padding:5px;">
-
-            <!-- Name Field -->
+        <h2> Edit Pet </h2>
+        <!-- Error Message  -->
+        {% if message %}
+            <span style="background-color:tomato">
+            {{ message }}
+            <span>
+            <br>
+        {% endif %}
+        <!--  -->
+        <!-- Form for Editing the Pet -->
+        <form action="{{url_for('pet_details', pet_id = pet.id)}}" method="POST" style="padding:5px;">
             {{ form.name.label }}: <br>
-            {{ form.name }} 
+            {{ form.name(value = pet.name) }} 
             <br>
-            {% if form.name.errors %}
-            {% for error in form.name.errors %}
-            <b style="color:tomato;"> {{ error }} </b> 
-            <br>
-            {% endfor %}
-            {% endif %}
-            <!-- Age Field -->
             {{ form.age.label }}: <br>
-            {{ form.age }} 
+            {{ form.age(value = pet.age) }} 
             <br>
-            {% if form.age.errors %}
-            {% for error in form.age.errors %}
-            <b style="color:tomato;"> {{ error }} </b> 
+            {{ form.bio.label }}: <br>
+            {{ form.bio(value = pet.bio) }} 
             <br>
-            {% endfor %}
-            {% endif %}
-             <!-- Bio Field -->
-             {{ form.bio.label }}: <br>
-             {{ form.bio }} 
-             <br>
-             {% if form.bio.errors %}
-            {% for error in form.bio.errors %}
-            <b style="color:tomato;"> {{ error }} </b> 
-            <br>
-            {% endfor %}
-            {% endif %}
             {{ form.csrf_token }}
             {{ form.submit }}
-        </form> 
-
+        </form>
+        <!--  -->
     </div>
 {% endblock %}
