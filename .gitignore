@@ -1,2 +1,3 @@
 /Module 2/become_a_flask_developer_env/*
-/Module 3/.module3_env/*
+/Module 3/module3_venv/*  
+**/__pycache__/
